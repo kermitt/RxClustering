@@ -12,7 +12,7 @@ import java.util.Map;
 public class FeatureRouter {
 	
 	//public Map<String, Map<String, Seen>> router = new HashMap<>();
-	public LinkedHashMap <String, Map<String, Seen>> router = new LinkedHashMap();  
+	public LinkedHashMap <String, Map<String, Seen>> router = new LinkedHashMap<>();  
 	public FeatureRouter() {		
 		LinkedHashMap <String, String>lhm = Config.getFeatures();
 		for ( String key : lhm.keySet()) {
