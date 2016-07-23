@@ -11,16 +11,19 @@ import kmeans.ReduxShiftMeans;
 import java.util.*;
 
 public class Step3_TimeSeries extends PSVReader {
+	static String IN_FILE = Config.RESULTS_HOME + Config.step2_rollup;
+	String OUT_FILE = Config.RESULTS_HOME + Config.CLUSTER_FILE;
+
+	
+	
 	public Map<String, List<String>> time_chunks = new HashMap<>();
 	private double[] X_pov, Y_pov, Z_pov;
 
 	public void doClustering() {
-		String filepath = Config.RESULTS_HOME + Config.CLUSTER_FILE;
 		// String header = "when|seen|X|Y|Z";
 		String header = "when|seen|X|Y|Z|velocity|days_supply_count|patient_paid_amount|ingredient_cost_paid_amount|male|female|sex_other|ccs_22|ccs_24|ccs_29|ccs_other";
-		GeneralWriter gw = new GeneralWriter(filepath);
-		gw.step1_of_2(header);
-		GeneralWriter writer = new GeneralWriter(filepath);
+		GeneralWriter writer = new GeneralWriter(OUT_FILE);
+		writer.step1_of_2(header);
 		String[] keys = getSortedKeys_forTimeChunks();
 		for (String when : keys) {
 			ReduxShiftMeans kShiftMeans = new ReduxShiftMeans(shape, maxDepth);
@@ -107,13 +110,12 @@ public class Step3_TimeSeries extends PSVReader {
 		Y_pov = Config.getRandomRiv();
 		Z_pov = Config.getBlankRiv();
 	}
-
+	
 	public static void main(String... strings) {
 		long t1 = System.currentTimeMillis();
 		Step3_TimeSeries tsc = new Step3_TimeSeries();
 		tsc.setup();
-		String fullpath = Config.RESULTS_HOME + Config.step2_rollup;
-		tsc.read_psv(3000000, fullpath);
+		tsc.read_psv(Config.READ_ALL_THE_FILE, IN_FILE);
 
 		tsc.doClustering();
 		Caller.log("The end");
@@ -159,13 +161,4 @@ public class Step3_TimeSeries extends PSVReader {
 		}
 		return ary;
 	}
-
-	/*
-	 * public void display() {
-	 * 
-	 * for (String when : time_chunks.keySet()) { List<String> events =
-	 * time_chunks.get(when); Caller.note(events.size() + " for " + when +
-	 * " from total " + depth ); } }
-	 */
-
 }
