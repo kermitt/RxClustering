@@ -6,20 +6,36 @@ import common.Config;
 import java.util.*;
 
 import common.GeneralWriter;
+/*
+ * 1: REMOVE redactions and their mates
+ * 2: REMOVe singleton personId...
+ * NOTE: In the 22_24_29 dataset this is a reduction 
+ * from 4.3 millions rows to 3.2 million rows
+ */
 
 public class Step0_RemoveNoise extends PSVReader {
+
+	// Added 'TEST' to the file name to NOT mistakenly overwrite 
+	// the proper Config.step0_prepped file 'cause generating that 
+	// takes awhile
+	static String IN_FILE = Config.HOME + Config.RAW_INPUT_FILE;
+	static String OUT_FILE = Config.RESULTS_HOME + "TEST" + Config.step0_prepped;
+
+	
+	
 	private LinkedHashMap<String, String> features = Config.getFeatures();
 	public Map<String, List<_Entry>> people = new HashMap<>();
-	//Map<String, String> observed = new HashMap<>();
-
+	
+	
 	public static void main(String... strings) {
+		
+		
+		
 		long t1 = System.currentTimeMillis();
-//		String path = Config.fullPath + Config.testfile;
-		String path = Config.fullPath + Config.file;
 		Step0_RemoveNoise rri = new Step0_RemoveNoise();
-		rri.read_psv(6000000, path);
+		rri.read_psv(Config.READ_SOME_OF_FILE, IN_FILE);
 		rri.winnow();
-		rri.marshal(Config.fullPath + Config.step0_prepped);
+		rri.marshal(OUT_FILE);
 		long t2 = System.currentTimeMillis();
 		Caller.context_note("The end in " + (t2 - t1) + " milsec ");
 	}
@@ -158,6 +174,5 @@ public class Step0_RemoveNoise extends PSVReader {
 			Caller.log("ACK! " + entry + " \t" + e.getMessage());
 			System.exit(0);
 		}
-
 	}
 }

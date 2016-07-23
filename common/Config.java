@@ -5,11 +5,15 @@ import java.util.*;
 
 public class Config {
 	////////////////// PATH RELATED ///////////
-	public static String fullPath = "C:/sites/healthpath/data/";
+	public static String HOME = "C:/sites/healthpath/data/";
+	public static String RESULTS_HOME = "C:/sites/healthpath/data/results/";
+	public static int READ_ALL_THE_FILE = 10000000; // lines of a PSV/CSV to read
+	public static int READ_SOME_OF_FILE = 1000; // lines of a PSV/CSV to read
+	
 	public static String testfile = "test_22_24_29.csv";
-	public static String file = "pd_raw_pharma_22_24_29.csv"; // raw
-	public static String step0_prepped = "step0_22_24_29.psv"; // removed dupes
-	public static String step1_concepts = "step1_22_24_29.psv"; // semantic
+	public static String RAW_INPUT_FILE = "pd_raw_pharma_22_24_29.csv"; // raw
+	public static String step0_prepped = "step0_VETTED_22_24_29.csv"; // removed dupes
+	public static String step1_concepts = "step1_CONCEPTSPACE_22_24_29.psv"; // semantic
 																// spaces
 	public static String step2_rollup = "step2_ROLLUP_22_24_29.psv"; // people
 																		// across

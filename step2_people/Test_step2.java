@@ -8,7 +8,7 @@ public class Test_step2 {
 	} 
 	public void readConcept() { 
 		_ReadConcept rc = new _ReadConcept();
-		String fullpath = Config.fullPath + Config.step1_concepts;
+		String fullpath = Config.HOME + Config.step1_concepts;
 		rc.read_psv(50000, fullpath); // it is currently about 5k 
 
 		boolean isOk = true; 

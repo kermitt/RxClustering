@@ -1,38 +1,42 @@
 package step2_people;
 
-
 import common.Caller;
 import common.Config;
 import common.GeneralWriter;
-import common.Config;
 import common.PSVReader;
 import common.Seen;
 
 import java.util.*;
 
 public class Step2_people extends PSVReader {
+	static String IN_VETTED_RAW_FILE = Config.RESULTS_HOME + Config.step0_prepped;
+	static String OUT_FILE = Config.RESULTS_HOME + Config.step2_rollup;
+	static String IN_VETTED_CONCEPT_FILE = Config.RESULTS_HOME + Config.step1_concepts;
+
 	public _ReadConcept conceptSpace;
 	public Map<String, _Person> people = new HashMap<>();
 	public List<String> entries = new ArrayList<>();
 	private LinkedHashMap<String, String> features = Config.getFeatures();
-	private int date_index; // CURRENTLY this is 8 but that might change in the future
+	private int date_index; // CURRENTLY '8' but might change in future
+
 	public Step2_people() {
-		int index = 0; 
-		for ( String key : features.keySet()) {
-			if ( key.equals("filled_date")) {
+		int index = 0;
+		for (String key : features.keySet()) {
+			if (key.equals("filled_date")) {
 				date_index = index;
 			}
-			index++; 
+			index++;
 		}
 	}
-	
+
 	// untested
-	private void marshal() {
-//		String header = "person_id|when|velocity|days_supply_count|patient_paid_amount|ingredient_cost_paid_amount|riv";
+	private void marshal(String OUT_FILE) {
+		// String header =
+		// "person_id|when|velocity|days_supply_count|patient_paid_amount|ingredient_cost_paid_amount|riv";
 		String header = "person_id|when|velocity|days_supply_count|patient_paid_amount|ingredient_cost_paid_amount|riv|male|female|sex_other|ccs_category_id_22|ccs_category_id_24|ccs_category_id_29|ccs_cat_other";
-		
-		String filepath = Config.fullPath + Config.step2_rollup; 
-		GeneralWriter gw = new GeneralWriter(filepath);
+
+		// String filepath = Config.fullPath + Config.step2_rollup;
+		GeneralWriter gw = new GeneralWriter(OUT_FILE);
 		gw.step1_of_2(header);
 		int depth = 0;
 		for (String person_id : people.keySet()) {
@@ -70,31 +74,13 @@ public class Step2_people extends PSVReader {
 		}
 	}
 
-	public void readConceptSpace() {
+	public void readConceptSpace(String file_that_has_the_concept_spaces) {
 		conceptSpace = new _ReadConcept();
-		String fullpath = Config.fullPath + Config.step1_concepts;
-		conceptSpace.read_psv(50000, fullpath);
+		conceptSpace.read_psv(Config.READ_ALL_THE_FILE, file_that_has_the_concept_spaces);
 	}
 
-	public void readPeopleData() {
-		String fullpath = Config.fullPath + Config.step0_prepped;
-		//String fullpath = Config.fullPath + "step0_22_24_29_TEST.psv";
-		read_psv(10000000, fullpath);
-	}
-
-	public static void main(String... strings) {
-		long t1 = System.currentTimeMillis();
-
-		Step2_people pc = new Step2_people();
-		pc.readConceptSpace();
-		pc.readPeopleData();
-		pc.populateTimeSeries();
-		pc.merge();
-		pc.marshal();
-
-		long t2 = System.currentTimeMillis();
-		Caller.context_note("The end in " + (t2 - t1) + " milsec ");
-
+	public void readPeopleData(String IN_FILE) {
+		read_psv(Config.READ_ALL_THE_FILE, IN_FILE);
 	}
 
 	@Override
@@ -106,15 +92,15 @@ public class Step2_people extends PSVReader {
 			String[] pieces = entry.split(",");
 
 			if (pieces.length == features.size()) {
-					entries.add(entry);
-					String person_id = pieces[0];
-					int days_since_epoch = getDaysSinceEpoch_yyyyddmmhhmmss(pieces[8]);
+				entries.add(entry);
+				String person_id = pieces[0];
+				int days_since_epoch = getDaysSinceEpoch_yyyyddmmhhmmss(pieces[8]);
 
-					if (!people.containsKey(person_id)) {
-						_Person person = new _Person();
-						people.put(person_id, person);
-					}
-					people.get(person_id).findZeroDay(days_since_epoch);
+				if (!people.containsKey(person_id)) {
+					_Person person = new _Person();
+					people.put(person_id, person);
+				}
+				people.get(person_id).findZeroDay(days_since_epoch);
 			} else {
 				Caller.note("[step2_people.Step2_people.java] Skipping " + entry);
 			}
@@ -132,16 +118,11 @@ public class Step2_people extends PSVReader {
 				if (pieces.length == 14) {
 					String person_id = pieces[0];
 					int days_since_epoch = getDaysSinceEpoch_yyyyddmmhhmmss(pieces[date_index]);
-//					int isPositive = roundToNearest10th(pieces[7]);
-//					if (isPositive >= 0) {
-						_Person person = people.get(person_id);
-						days_since_epoch -= person.earliest_day;
-						int period = days_since_epoch / Config.TIME_PERIOD;
+					_Person person = people.get(person_id);
+					days_since_epoch -= person.earliest_day;
+					int period = days_since_epoch / Config.TIME_PERIOD;
 
-						person.addRxEntry(period, entry);
-//					} else {
-//						Caller.note("Skipping 'take back' " + isPositive + " for " + entry);
-//					}
+					person.addRxEntry(period, entry);
 				} else {
 					Caller.note("[PersonRollup_Step2 populateTimeSeries] Skipping " + entry);
 				}
@@ -149,6 +130,28 @@ public class Step2_people extends PSVReader {
 				Caller.log("! FAILURE ON " + entry);
 				e.printStackTrace();
 			}
-		}	
+		}
 	}
+
+	public static void main(String... strings) {
+		long t1 = System.currentTimeMillis();
+
+		Step2_people pc = new Step2_people();
+		// read in the hyper cube
+		pc.readConceptSpace(IN_VETTED_CONCEPT_FILE);
+		// read in the vetted raw file
+		pc.readPeopleData(IN_VETTED_RAW_FILE);
+		// A & B will take a little while...
+		// A: Time series! <- Important/complicated
+		pc.populateTimeSeries();
+		// B: Time series! <- Important/complicated
+		pc.merge();
+		// write the results
+		pc.marshal(OUT_FILE);
+
+		long t2 = System.currentTimeMillis();
+		Caller.context_note("The end in " + (t2 - t1) + " milsec ");
+
+	}
+
 }

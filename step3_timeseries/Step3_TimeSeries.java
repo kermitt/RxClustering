@@ -15,7 +15,7 @@ public class Step3_TimeSeries extends PSVReader {
 	private double[] X_pov, Y_pov, Z_pov;
 
 	public void doClustering() {
-		String filepath = Config.fullPath + Config.CLUSTER_FILE;
+		String filepath = Config.RESULTS_HOME + Config.CLUSTER_FILE;
 		// String header = "when|seen|X|Y|Z";
 		String header = "when|seen|X|Y|Z|velocity|days_supply_count|patient_paid_amount|ingredient_cost_paid_amount|male|female|sex_other|ccs_22|ccs_24|ccs_29|ccs_other";
 		GeneralWriter gw = new GeneralWriter(filepath);
@@ -112,7 +112,7 @@ public class Step3_TimeSeries extends PSVReader {
 		long t1 = System.currentTimeMillis();
 		Step3_TimeSeries tsc = new Step3_TimeSeries();
 		tsc.setup();
-		String fullpath = Config.fullPath + Config.step2_rollup;
+		String fullpath = Config.RESULTS_HOME + Config.step2_rollup;
 		tsc.read_psv(3000000, fullpath);
 
 		tsc.doClustering();

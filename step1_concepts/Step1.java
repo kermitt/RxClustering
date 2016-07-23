@@ -10,6 +10,10 @@ import common.PSVReader;
 import common.Seen;
 
 public class Step1 extends PSVReader {
+	static String IN_FILE = Config.RESULTS_HOME + Config.step0_prepped;
+	static String OUT_FILE = Config.RESULTS_HOME + Config.step1_concepts;
+	
+	
 	private LinkedHashMap<String, String> features = Config.getFeatures();
 
 	@Override
@@ -54,10 +58,10 @@ public class Step1 extends PSVReader {
 		read_psv(10000000, path);
 	}
 
-	public void marshal(String filepath ) {
+	public void marshal( String OUT_FILE) {
 		String header = "seen|feature|payload|riv";
 
-		GeneralWriter gw = new GeneralWriter(filepath);
+		GeneralWriter gw = new GeneralWriter(OUT_FILE);
 
 		gw.step1_of_2(header);
 		for (String feature : router.keySet()) {
@@ -105,10 +109,10 @@ public class Step1 extends PSVReader {
 
 	public static void main(String... strings) {
 //		String fullPath = Config.fullPath + "step0_22_24_29_TEST.psv";
-		String fullPath = Config.fullPath + Config.step0_prepped; 
+//		String fullPath = Config.HOME + Config.step0_prepped; 
 		Step1 s1 = new Step1();
-		s1.readFile(fullPath);
-		s1.marshal(Config.fullPath + Config.step1_concepts);
+		s1.readFile(IN_FILE);
+		s1.marshal(OUT_FILE);
 		Caller.log("THE END");
 	}
 }
