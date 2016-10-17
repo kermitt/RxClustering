@@ -1,0 +1,160 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="application/javascript" src="everything_data.js"></script>
+<style>
+.table_min_smashingmagazine{font-family:"Lucida Sans Unicode", "Lucida Grande", Sans-Serif;font-size:12px;background:#fff;width:480px;border-collapse:collapse;text-align:left;margin:20px;}
+
+.table_min_smashingmagazine th{font-size:14px;font-weight:normal;color:#039;border-bottom:2px solid #6678b1;padding:10px 8px;}
+.table_min_smashingmagazine td{color:#669;padding:9px 8px 0;font-size:16px;}
+.table_min_smashingmagazine tbody tr:hover td{color:#009;}
+
+</style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body bgcolor="white">
+
+
+
+<div id="canvasHolder">
+
+<canvas id="background" class="pane" width="1650" height="550"></canvas>
+<canvas id="glasspane" class="pane" width="1650" height="550"></canvas>
+
+</div>
+
+
+<div id="bottom">
+<table border='0'>
+<tr><td valign='top'>
+	<!-- The legend -->
+	<table class='table_min_smashingmagazine' border='1'>
+
+	<tr><td><div class="paid"></div></td><td>paid</td></tr>
+	<tr><td><div class="cost"></div></td><td>cost</td></tr>
+	<tr><td><div class="days"></div></td><td>supply days</td></tr>
+	<tr><td><div class="complexity"></div></td><td>complexity</td></tr>
+	<tr><td><div class="pain"></div></td><td>pain</td></tr>
+	<tr><td><div class="velocity"></div></td><td>velocity</td></tr>
+
+	</table>
+
+</td>
+<td valign='top'>
+	<!-- The data  -->
+
+
+	<table class='table_min_smashingmagazine' border='1'>
+	<tr>
+	<th>paid</th>
+	<th>cost</th>
+	<th>days</th>
+	<th>complexity</th>
+	<th>pain</th>
+	<th>sex</th>
+	<th>velocity</th>
+	<th>alive</th>
+	<th>death age</th>
+	<th>time depth</th>
+	<th>claimlines count</th>
+
+	</tr>
+	<!-- observed -->
+	<tr>
+		<td id='paid'></td>
+		<td id='cost'></td>
+		<td id='days'></td>
+		<td id='complexity'></td>
+		<td id='pain'></td>
+		<td id='sex'>tbd</td>
+		<td id='velocity'></td>
+		<td id='alive'>tdb</td>
+		<td id='death_age'>tdb</td>
+		<td id='time_depth'>tdb</td>
+		<td id='claim_lines'></td>
+
+	</tr>
+	<!-- over under -->
+	<tr>
+		<td id='ou_paid'></td>
+		<td id='ou_cost'></td>
+		<td id='ou_days'></td>
+		<td id='ou_complexity'></td>
+		<td id='ou_pain'></td>
+		<td id='ou_sex'></td>
+		<td id='ou_velocity'></td>
+		<td id='ou_alive'></td>
+		<td id='ou_death_age'></td>
+		<td id='ou_time_depth'></td>
+		<td id='ou_claim_lines'></td>
+
+	</tr>
+	<!-- predicted -->
+	<tr>
+		<td id='p_paid'></td>
+		<td id='p_cost'></td>
+		<td id='p_days'></td>
+		<td id='p_complexity'></td>
+		<td id='p_pain'></td>
+		<td id='p_sex'></td>
+		<td id='p_velocity'></td>
+		<td id='p_alive'></td>
+		<td id='p_death_age'></td>
+		<td id='p_time_depth'></td>
+		<td id='p_claim_lines'></td>
+
+	</tr>
+
+
+
+
+	</table>
+</td>
+<td valign='top'>
+	<!-- The feature  -->
+
+	<table class='table_min_smashingmagazine' border='1'>
+	<tr>
+	<th>Count</th>
+	<th>Assoc complexity</th>
+	<th>Drug desc</th>
+	</tr>
+	<tr>
+	<td id='globally_seen'></td>
+	<td id='drug_complexity'></td>
+	<td id='drug_desc'></td>
+	</tr>
+	</table>
+
+</td>
+
+
+</tr>
+</table>
+
+
+
+</div>
+
+
+<script>
+function setState( bool ) {
+//	document.getElementById("state").innerHTML = bool;
+}
+function setState2( bool ) {
+//	document.getElementById("state2").innerHTML = bool;
+}
+</script>
+
+<script src="logic.js"></script>
+<script src="display.js"></script>
+
+<script src="mouse.js"></script>
+<script>
+MouseController.init( "glasspane", Display );
+Logic.init(1650, 550);
+Display.init(Logic.matrix, "background", 1650,550, "glasspane");
+</script>
+</body>
+</html>
